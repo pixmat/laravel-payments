@@ -1,7 +1,8 @@
 <?php
 
 Autoloader::namespaces(array(
-	'Payments' => Bundle::path('epicentro-payment') . 'models',
+	'Payments' => Bundle::path('laravel-payment') . 'libraries',
+	'Payments\Models' => Bundle::path('laravel-payment') . 'models',
 ));
 
 Laravel\IoC::register('paypalGateway', function()
@@ -18,7 +19,7 @@ Laravel\IoC::register('pagueloFacilGateway', function()
 
 /**
  * Register IoC objects
- */
+*/
 Laravel\IoC::singleton('paymentManager', function()
 {
 	$enabledPaymentGateways = Config::get('laravel-payments::laravel-payments.paymentGatewayList');
@@ -26,5 +27,5 @@ Laravel\IoC::singleton('paymentManager', function()
 	foreach ($enabledPaymentGateways as $gatewayName){
 		$paymentGateways[] = Laravel\IoC::resolve($gatewayName);
 	}
-	return new PaymentManager($paymentGateways);
+	return new DefaultPaymentManager($paymentGateways);
 });
