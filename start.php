@@ -19,7 +19,7 @@ Laravel\IoC::register('pagueloFacilGateway', function()
 /**
  * Register IoC objects
  */
-Laravel\IoC::register('paymentManager', function()
+Laravel\IoC::singleton('paymentManager', function()
 {
 	$enabledPaymentGateways = Config::get('laravel-payments::laravel-payments.paymentGatewayList');
 	$paymentGateways = array();
