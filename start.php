@@ -5,16 +5,16 @@ Autoloader::namespaces(array(
 	'Payments\Models' => Bundle::path('laravel-payment') . 'models',
 ));
 
-Laravel\IoC::register('paypalGateway', function()
+/*Laravel\IoC::register('paypalGateway', function()
 {
 	$paypalGateway = new PaypalPaymentGateway();
 	return $paypalGateway;
 });
-
+*/
 Laravel\IoC::register('pagueloFacilGateway', function()
 {
-	$pagueloFacilGateway = new PagueloFaciltGateway();
-	return $pagueloFacilGateway;
+	$config = Config::get('payments::payments.pagueloFacilConfig');
+	return new PagueloFaciltGateway($config);
 });
 
 /**

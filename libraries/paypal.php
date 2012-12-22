@@ -8,7 +8,7 @@ class PaypalPaymentGateway implements PaymentService
 {
 	var $payments;
 	
-	function __construct() {
+	function __construct(Configuration $config) {
 		$this->payments = new PHP_Payments();
 		//TODO: find out the right config file format
 		$this->config = Payment_Utility::load('config', Bundle::path('laravel-payments') . 'config/paypal.php');
