@@ -1,5 +1,4 @@
 <?php
-
 use Laravel\Log;
 
 class PagueloFacilGateway implements PaymentService
@@ -31,3 +30,9 @@ class PagueloFacilGateway implements PaymentService
 		}
 		return 'paguelofacil';
 	}
+	
+	public function __toString()
+	{
+		return $this->name();
+	}
+}

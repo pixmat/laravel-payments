@@ -37,14 +37,3 @@ class DataValue
 		$this->data = $data;
 	}
 }
-
-class Configuration extends DataValue
-{
-	public function __construct(array $config = null)
-	{
-		if(is_null($config)){
-			throw new Exception('You need to provide a valid not null configs array');
-		}
-		$this->setData($data);
-	}
-}

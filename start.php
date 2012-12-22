@@ -1,9 +1,21 @@
 <?php
+use Laravel\Log;
+use Laravel\IoC;
+
+
+Log::debug('== starting payments bundle ==');
+Autoloader::directories(array(
+Bundle::path('payments') . 'libraries',
+));
 
 Autoloader::namespaces(array(
-'Payments' => Bundle::path('laravel-payment') . 'libraries',
-'Payments\Models' => Bundle::path('laravel-payment') . 'models',
+'Payments' => Bundle::path('payments'),
 ));
+
+
+/**
+ * Register IoC objects
+*/
 /*
  Laravel\IoC::register('paypal', function()
  {
@@ -12,27 +24,23 @@ Autoloader::namespaces(array(
  		return $paypalGateway;
  		});
 */
-Laravel\IoC::register('paguelofacil', function()
+IoC::register('configs', function()
 {
-	Log::debug('Storing into IoC container a resolver for paguelofacil');
-	$config = Config::get('payments::payments.paguelofacil');
-	return new PagueloFacilGateway($config);
+	Log::debug('loading configurations into IoC');
+	return Configuration::build();
 });
 
-/**
- * Register IoC objects
-*/
-Laravel\IoC::singleton('paymentManager', function()
+IoC::register('paguelofacil', function()
 {
-	Log::debug('creating payment manager');
-	$enabledPaymentGateways = Config::get('payments::payments.paymentServicesList');
-	$paymentGateways = array();
-	$count = count($enabledPaymentGateways);
-	Log::debug("$count payment gateways enabled");
-	foreach ($enabledPaymentGateways as $gatewayName){
-		Log::debug("Resolving $gatewayName in IoC container");
-		$paymentGateways[] = Laravel\IoC::resolve($gatewayName);
-	}
-	$manager = new DefPaymentManager($paymentGateways);
-	return $manager;
+	$configs = IoC::resolve('configs');
+	Log::debug('creating paguelofacil payment gateway');
+	return new PagueloFacilGateway($configs->paguelofacil);
 });
+
+IoC::singleton('paymentManager', function()
+{
+	$configs = IoC::resolve('configs');
+	Log::debug('creating payment manager');
+	return  new DefaultPaymentManager($configs->paymentServicesList);
+});
+

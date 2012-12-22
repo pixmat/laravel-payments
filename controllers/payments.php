@@ -1,18 +1,21 @@
 <?php
 
 use Laravel\Log;
+use Laravel\IoC;
 
 class Payments_Payments_Controller extends Controller
 {
+	var $layout = "payments::layouts.default";
 
 	public function action_index() {
-		$paymentManager = Laravel\IoC::resolve('paymentManager');
-		Log::debug('Payment manager: ' . print_r($paymentManager, true));
+		$paymentManager = IoC::resolve('paymentManager');
 
 		//set the layout content and title
-		//$this->layout->modelName = $modelName;
-		$this->layout->content = View::make("payments::paguelofacil", array(
-				'paymentManager' => Laravel\IoC::resolve('paymentManager'),
-		));
+		$this->layout->paymentManager = $paymentManager;
+		$view = View::make("payments::index");
+		$view->paymentManager = $paymentManager;
+		
+		$this->layout->content = $view;
 	}
 }
+

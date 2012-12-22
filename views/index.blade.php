@@ -1,7 +1,7 @@
 
 <h3>Available payment services</h3>
 <ul>
-@foreach($service in $paymentManager->getPaymentGateways())
+@foreach($paymentManager->getPaymentGateways() as $service)
 	<li>{{ $service->name() }}</li>
 @endforeach
 </ul>
