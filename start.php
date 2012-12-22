@@ -5,13 +5,13 @@ Autoloader::namespaces(array(
 	'Payments\Models' => Bundle::path('laravel-payment') . 'models',
 ));
 
-/*Laravel\IoC::register('paypalGateway', function()
+Laravel\IoC::register('payments.paypal', function()
 {
 	$paypalGateway = new PaypalPaymentGateway();
 	return $paypalGateway;
 });
-*/
-Laravel\IoC::register('pagueloFacilGateway', function()
+
+Laravel\IoC::register('payments.pagueloFacil', function()
 {
 	$config = Config::get('payments::payments.pagueloFacilConfig');
 	return new PagueloFaciltGateway($config);
@@ -22,7 +22,7 @@ Laravel\IoC::register('pagueloFacilGateway', function()
 */
 Laravel\IoC::singleton('paymentManager', function()
 {
-	$enabledPaymentGateways = Config::get('laravel-payments::laravel-payments.paymentGatewayList');
+	$enabledPaymentGateways = Config::get('payments::payments.paymentGatewayList');
 	$paymentGateways = array();
 	foreach ($enabledPaymentGateways as $gatewayName){
 		$paymentGateways[] = Laravel\IoC::resolve($gatewayName);
