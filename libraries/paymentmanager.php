@@ -22,14 +22,3 @@ class DefaultPaymentManager implements PaymentManager
 		return $this->gateways;
 	}
 }
-
-interface PaymentService
-{
-	function doPayment(PaymentInvoice $invoice);
-}
-
-interface PaymentInvoice {
-	function clientName();
-	function invoiceIdentifier();
-	function recordPayment($amount = 0, $type = 'Cash');
-}
