@@ -2,5 +2,6 @@
 
 interface PaymentService
 {
-	function paymentLink(PaymentInvoice $paymentInvoice);
+	function name();
+	function paymentLink(Invoice $invoice);
 }

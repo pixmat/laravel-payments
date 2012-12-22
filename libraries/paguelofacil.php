@@ -2,30 +2,32 @@
 
 use Laravel\Log;
 
-class PagueloFaciltGateway implements PaymentService
+class PagueloFacilGateway implements PaymentService
 {
-	var $config = array();
+	var $config = null;
+	
 	public function __construct(array $config = null)
 	{
 		if(is_null($config)){
-			throw new Exception('Please provide some configurations for "Paguelo Facil" service');
+			throw new Exception('Please provide some valid configurations for Paguelo Facil');
 		}
-		$this->config = $config;
-		
-		include('/path/to/payments/payments.php');
-		
-		$p = new PHP_Payments;
-		
-		$config = Payment_Utility::load('config', '/path/to/your/gateway/config');
-		$params = array('cc_number' => 4111111111111111, 'amt' => 35.00, 'cc_exp' => '022016', 'cc_code' => '203');
-		
-		$response = $p->oneoff_payment('name_of_payment_driver', $params, $config);
+		$this->config = new Configuration($config);
 	}
 
-	public function paymentLink(PaymentInvoice $invoice)
+	public function paymentLink(Invoice $invoice)
 	{
-		$cclw = $this->config['cclw'];
-		$requestUrl = $this->config['paymentUrl'];
-		return "$requestUrl?CCLW=$cclw&CMTN=$invoice->amount()&CDSC=$invoice->description()&invoice=$invoice->invoiceId()";
+		$paymentUrl = $this->config->paymentUrl;
+		$cclw = $this->config->cclw;
+		$cdsc = $invoice->description();
+		$cmtn = $invoice->amount();
+		$invoiceId = $invoice->invoiceId();
+		return "$paymentUrl?CCLW=$cclw&CMTN=&CDSC=$cdsc&invoice=$invoiceId";
 	}
-}
+	
+	public function name()
+	{
+		if(isset($this->config->name)){
+			return $this->config->name;
+		}
+		return 'paguelofacil';
+	}
