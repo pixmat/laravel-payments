@@ -5,11 +5,11 @@ use Laravel\IoC;
 
 Log::debug('== starting payments bundle ==');
 Autoloader::directories(array(
-Bundle::path('payments') . 'libraries',
+	Bundle::path('payments') . 'libraries',
 ));
 
 Autoloader::namespaces(array(
-'Payments' => Bundle::path('payments'),
+	'Payments' => Bundle::path('payments'),
 ));
 
 
