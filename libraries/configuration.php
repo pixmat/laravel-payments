@@ -8,7 +8,7 @@ class Configuration extends DataValue
 		if(is_null($config)){
 			throw new Exception('You need to provide a valid not null configs array');
 		}
-		$this->setData($config);
+		parent::__construct($config);
 	}
 	
 	public static function build(){

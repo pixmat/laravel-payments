@@ -4,6 +4,14 @@ class DataValue
 {
 	private $data = array();
 
+	public function __construct(array $data = null)
+	{
+		if(is_null($data)){
+			throw new Exception('You need to provide a valid not null array');
+		}
+		$this->setData($data);
+	}
+	
 	public function __set($name, $value)
 	{
 		$this->data[$name] = $value;
