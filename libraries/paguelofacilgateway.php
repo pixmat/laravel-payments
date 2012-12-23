@@ -20,7 +20,7 @@ class PagueloFacilGateway implements PaymentService
 		$cdsc = $invoice->description();
 		$cmtn = $invoice->amount();
 		$invoiceId = $invoice->invoiceId();
-		return "$paymentUrl?CCLW=$cclw&CMTN=&CDSC=$cdsc&invoice=$invoiceId";
+		return "$paymentUrl?CCLW=$cclw&CMTN=$cmtn&CDSC=$cdsc&invoice=$invoiceId";
 	}
 	
 	public function name()
