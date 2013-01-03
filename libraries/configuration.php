@@ -10,8 +10,11 @@ class Configuration extends DataValue
 		}
 		parent::__construct($config);
 	}
-	
+
 	public static function build(){
-		return new Configuration(Config::get('payments::payments'));
+		$configs = array_merge(Config::get('payments::main'),
+				Config::get('payments::gateways'),
+				Config::get('payments::layout'));
+		return new Configuration($configs);
 	}
 }

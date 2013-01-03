@@ -13,4 +13,4 @@ require_once __DIR__ . '/payments_view_composers.php';
 /**
  * Routes
  */
-requier_once __DIR__ . '/payments_routes.php';
+require_once __DIR__ . '/payments_routes.php';
