@@ -2,10 +2,12 @@
 /**
  * laravel payments routes
  */
-Route::get('(:bundle)', 'payments::payments@index');
-Route::get('(:bundle)/wellcome', 'payments::payments@wellcome');
-Route::get('(:bundle)/payment', 'payments::payments@payment');
+//list available payment gateways
+Route::get('(:bundle)', 'payments::payments@chooseMethod');
+//process payment response
+Route::get('(:bundle)/process/(:any)', 'payments::payments@processPayment');
 
+//dummy payment testing (if you do not have a valid test account)
 Route::get('(:bundle)/test/paguelofacil', array(
 	'as' => 'payments_test_paguelo_facil',
 	'uses' => 'payments::test@pagueloFacil',

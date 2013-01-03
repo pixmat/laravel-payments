@@ -13,8 +13,8 @@ class Configuration extends DataValue
 
 	public static function build(){
 		$configs = array_merge(Config::get('payments::main'),
-				Config::get('payments::gateways'),
-				Config::get('payments::layout'));
+				Config::get('paymentsgateways'),
+				Config::get('paymentslayouts'));
 		return new Configuration($configs);
 	}
 }
