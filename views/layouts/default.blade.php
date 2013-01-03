@@ -8,7 +8,7 @@
 </head>
 <body>
 	@include('payments::partials.header')
-	<div class="container">{{ 'content' }}</div>
+	<div class="container">{{ $content }}</div>
 	@include('payments::partials.footer')
 </body>
 </html>

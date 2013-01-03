@@ -2,6 +2,6 @@
 
 return array(
 		'layout' => 'payments::layouts.default',
-		'choosePaymentMethodView' => 'index',
-		'paymentResultsView' => 'paguelofacil',
+		'choosePaymentMethodView' => 'payments::index',
+		'paymentResultsView' => 'payments::paguelofacil',
 );

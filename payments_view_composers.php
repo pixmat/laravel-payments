@@ -4,9 +4,9 @@
  * 
  * @see http://laravel.com/docs/views#view-composers
  */
-View::composer('payments::index', 'payments::wellcome', 'payments::payment', function($view)
+View::composer(array('payments::index', 'payments::wellcome', 'payments::payment'), function($view)
 {
 	//$view->author = 'Eivar';
 	$paymentManager = IoC::resolve('paymentManager');
-	$view->paymentManager = $paymentManager;
+	$view->data['paymentManager'] = $paymentManager;
 });

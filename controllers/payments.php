@@ -15,7 +15,7 @@ class Payments_Payments_Controller extends Controller
 		$this->layout = View::make($this->configs->layout);
 	}
 
-	public function action_chooseMethod() {
+	public function action_chooseMethod() {	
 		$this->layout->content = View::make($this->configs->choosePaymentMethodView);
 	}
 
