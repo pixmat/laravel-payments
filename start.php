@@ -1,6 +1,8 @@
 <?php
 use Laravel\Log;
 use Laravel\IoC;
+use Laravel\Autoloader;
+use Laravel\Bundle;
 
 
 Log::debug('== starting payments bundle ==');

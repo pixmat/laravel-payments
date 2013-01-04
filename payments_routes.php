@@ -1,4 +1,6 @@
 <?php
+use Laravel\Routing\Route;
+
 /**
  * laravel payments routes
  */

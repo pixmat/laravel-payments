@@ -1,6 +1,6 @@
 <?php
 
-interface Invoice {
+interface IInvoice {
 	function invoiceId();
 	function clientName();
 	function description();
