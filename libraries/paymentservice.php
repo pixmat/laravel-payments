@@ -3,6 +3,6 @@
 interface PaymentService
 {
 	function name();
-	function paymentLink(Invoice $invoice);
+	function paymentLink(IInvoice $invoice);
 	function buttonImage();
 }

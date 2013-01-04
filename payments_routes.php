@@ -5,7 +5,7 @@ use Laravel\Routing\Route;
  * laravel payments routes
  */
 //list available payment gateways
-Route::get('(:bundle)', 'payments::payments@chooseMethod');
+Route::get('(:bundle)/(:any)', 'payments::payments@chooseMethod');
 //process payment response
 Route::any('(:bundle)/process/(:any)', 'payments::payments@processPayment');
 

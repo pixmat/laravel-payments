@@ -4,6 +4,8 @@ use Laravel\Log;
 use Laravel\IoC;
 use Laravel\Config;
 use Laravel\View;
+use Laravel\Redirect;
+use Laravel\Messages;
 
 class Payments_Payments_Controller extends Controller
 {
@@ -16,9 +18,15 @@ class Payments_Payments_Controller extends Controller
 	}
 
 	public function action_chooseMethod($invoiceHash) {
-		$invoice = Invoice::where_
-		$view = View::make($this->configs->choosePaymentMethodView);
-		$view->data['invoice'] = $invoice;
+		$invoice = Invoice::where_hash($invoiceHash)->first();
+		$errors = new Messages();
+		if(!$invoice){
+			$errors->add('epicentro', 'Invoice not found');
+		}
+		$view = View::make($this->configs->choosePaymentMethodView, array(
+				'invoice' => $invoice->asIInvoice(),
+				'errors' => $errors
+		));
 		$this->layout->content = $view;
 	}
 
@@ -26,7 +34,7 @@ class Payments_Payments_Controller extends Controller
 	{
 		$this->layout->content = View::make($this->configs->paymentResultsView);
 	}
-	
+
 	public function action_manual()
 	{
 		$this->layout->content = View::make('manual.index');

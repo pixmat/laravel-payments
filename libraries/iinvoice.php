@@ -6,5 +6,5 @@ interface IInvoice {
 	function description();
 	function amount();
 	function isRecurrent();
-	
+	function hashKey();
 }

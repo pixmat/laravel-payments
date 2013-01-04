@@ -27,7 +27,7 @@ class PagueloFacilGateway implements PaymentService
 		return 'paguelofacil';
 	}
 
-	public function paymentLink(Invoice $invoice)
+	public function paymentLink(IInvoice $invoice)
 	{
 		$paymentUrl = $this->config->paymentUrl;
 		$cclw = $this->config->cclw;
