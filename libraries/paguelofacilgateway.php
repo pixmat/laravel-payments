@@ -30,10 +30,10 @@ class PagueloFacilGateway implements PaymentService
 	public function paymentLink(IInvoice $invoice)
 	{
 		$paymentUrl = $this->config->paymentUrl;
-		$cclw = $this->config->cclw;
-		$cdsc = $invoice->description();
-		$cmtn = $invoice->amount();
-		$invoiceId = $invoice->invoiceId();
+		$cclw = HTML::entities($this->config->cclw);
+		$cdsc = HTML::entities($invoice->description());
+		$cmtn = number_format($invoice->amount(), 2, '.', '');
+		$invoiceId = $invoice->hashKey();
 		return "$paymentUrl?CCLW=$cclw&CMTN=$cmtn&CDSC=$cdsc&invoice=$invoiceId";
 	}
 	

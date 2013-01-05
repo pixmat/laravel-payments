@@ -8,9 +8,6 @@ class Payments_Test_Controller extends Controller
 	
 	public function action_paguelofacil(){
 		Log::debug('test for pagueloffacil');
-		$view = View::make("payments::paguelofacil", array(
-				'paymentManager' => $paymentManager,
-		));
-		$this->layout->content = $view;
+		$this->layout->content = View::make("payments::paguelofacil");
 	}
 }

@@ -6,7 +6,7 @@ use Laravel\View;
  * 
  * @see http://laravel.com/docs/views#view-composers
  */
-View::composer(array('payments::index', 'payments::wellcome', 'payments::payment'), function(View $view)
+View::composer(array('payments::index', 'payments::paguelofacil'), function(View $view)
 {
 	Log::debug('Composing view ' . $view->view);
 	$paymentManager = IoC::resolve('paymentManager');
