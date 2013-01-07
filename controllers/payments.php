@@ -32,7 +32,30 @@ class Payments_Payments_Controller extends Controller
 
 	public function action_processPayment($paymentGateway = '')
 	{
-		$this->layout->content = View::make($this->configs->paymentResultsView);
+		parse_str($_SERVER['QUERY_STRING'], $queryString);
+		$query = new DataValue($queryString);
+		$errors = new Messages();
+		$gateway = IoC::resolve($paymentGateway);
+		if ( !isset($gateway) || is_null($gateway) ){
+			$errors->add('epicentro', "Invalid payment service option ($paymentGateway)");
+		}
+
+		$result = $gateway->processResult($query);
+		$status = $result[IPaymentResult::RECORDED_STATUS];
+		if ( $result[IPaymentResult::FAILED] ){
+			$errors->add('epicentro', "Payment not approved, the payment service says: [$status]");
+		}
+
+		$invoice = Invoice::where_hash($query->invoice);
+		if(!$invoice){
+			$errors->add('epicentro', "Invoice ($query->invoice) not found");
+		} else {
+			$payment = Payment::fromPaymentResult($result);
+			$payment->invoice = $invoice;
+			$payment->save();
+		}
+			
+		$this->layout->content = View::make($this->configs->paymentResultsView, array($errors));
 	}
 
 	public function action_manual()

@@ -41,4 +41,23 @@ class PagueloFacilGateway implements PaymentService
 	{
 		return 'https://secure.paguelofacil.com/images/botones/acceptamos_paguelofacil_1b_200.png';
 	}
+	
+	public function processResult(DataValue $response)
+	{
+		return array(
+				IPaymentResult::RECORDED_KEY => $response->Oper,
+				IPaymentResult::RECORDED_AMOUNT => $response->TotalPagado,
+				IPaymentResult::RECORDED_DATE => $response->Fecha,
+				IPaymentResult::RECORDED_TIME => $response->Hora,
+				IPaymentResult::RECORDED_STATUS => $response->Estado,
+				IPaymentResult::RECORDED_TYPE => $response->Tipo,
+				IPaymentResult::RECORDED_CLIENT_NAME => $response->Usuario,
+				IPaymentResult::RECORDED_CLIENT_EMAIL => $response->Email,
+				IPaymentResult::RECORDED_GATEWAY_NAME => $response->$this->name(),
+
+				IPaymentResult::SUCCESSFUL => ($response->Estado === 'Aprobada'),
+				IPaymentResult::FAILED => ($response->Estado === 'Denegado'),
+				);
+		
+	}
 }

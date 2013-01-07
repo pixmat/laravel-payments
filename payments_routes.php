@@ -19,9 +19,9 @@ Route::group(array('before' => 'logged_in'), function()
 	));
 
 	//dummy payment testing (if you do not have a valid test account)
-	Route::get('(:bundle)/test/paguelofacil', array(
-		'as' => 'payments_test_paguelo_facil',
-		'uses' => 'payments::test@pagueloFacil',
+	Route::get('(:bundle)/test/process/(:any)', array(
+		'as' => 'dummy_payments_processor',
+		'uses' => 'payments::test@processPayment',
 	));
 
 });
