@@ -1,14 +1,11 @@
 <?php
 return array(
-		'name' => 'payments',
-		//test or production
-		'mode' => 'test',
-
 		//List of enabled payment gateways
 		'paymentServicesList' => array (
 				//'paypal',
 				'paguelofacil',
 		),
+		
 		'paguelofacil' => array(
 				'name' => 'Paguelo Facil',
 				'cclw' => '==EPICENTRO==',

@@ -1,16 +1,53 @@
 <?php
 
+use Laravel\URL;
+
 use Laravel\Log;
+use Laravel\Redirect;
+use Laravel\Error;
+use Laravel\HTML;
 
 class Payments_Test_Controller extends Controller
 {
-	var $layout = "payments::layouts.default";
-	
-	public function action_paguelofacil(){
-		Log::debug('test for pagueloffacil');
-		$view = View::make("payments::paguelofacil", array(
-				'paymentManager' => $paymentManager,
-		));
-		$this->layout->content = $view;
+	public function action_processPayment($paymentGateway){
+		parse_str($_SERVER['QUERY_STRING'], $queryString);
+
+		Log::debug("test for $paymentGateway with params: " . print_r($queryString, true));
+		if($paymentGateway == 'paguelofacil'){
+			$responseQueryString = $this->getPagueloFacilSuccessResponse(new DataValue($queryString));
+			$url = URL::to_action('payments::payments@processPayment', array('paguelofacil'), $responseQueryString);
+			Redirect::to($url);
+		}
+	}
+
+	/**
+	 * Faking paguelo facil response, that according to documentation must contain the following fields:
+	 *
+	 * TotalPagado = 0 si denegada, el monto cobrado si es aceptada
+	 * Fecha =Fecha de la transacción en formato dd/mm/yyyy
+	 * Hora = Hora de la transacción en formato HH:MM.SS
+	 * Tipo = Tipo de tarjeta VISA o MC para MasterCard
+	 * Oper = Numero de Operación alfanumérico 15 caracteres
+	 * Usuario = Nombre y Apellidos del tarjeta habiente
+	 * Email = Email del tarjetahabiente
+	 * Estado = Aprobada o Denegado
+	 * 
+	 * plus any extra field send to payment request
+	 *
+	 * @param DataValue $query
+	 */
+	public function getPagueloFacilSuccessResponse(DataValue $query)
+	{
+		$result = array(
+				'TotalPagado' => $query->CMTN,
+				'Fecha' => date('Y-m-d'),
+				'Hora' => date('H:i:s'),
+				'Tipo' => 'VISA',
+				'Oper' => date('YmdHis'),
+				'Usuario' => 'Joker',
+				'Email' => 'joker@gotham.city',
+				'Estado' => 'Aprobada',
+				'invoice' => $query->invoice,
+		);
 	}
 }
