@@ -53,7 +53,7 @@ class PagueloFacilGateway implements PaymentService
 				IPaymentResult::RECORDED_TYPE => $response->Tipo,
 				IPaymentResult::RECORDED_CLIENT_NAME => $response->Usuario,
 				IPaymentResult::RECORDED_CLIENT_EMAIL => $response->Email,
-				IPaymentResult::RECORDED_GATEWAY_NAME => $response->$this->name(),
+				IPaymentResult::RECORDED_GATEWAY_NAME => $this->name(),
 
 				IPaymentResult::SUCCESSFUL => ($response->Estado === 'Aprobada'),
 				IPaymentResult::FAILED => ($response->Estado === 'Denegado'),

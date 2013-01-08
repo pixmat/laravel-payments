@@ -17,7 +17,8 @@ class Payments_Payments_Controller extends Controller
 		$this->layout = View::make($this->configs->layout);
 	}
 
-	public function action_chooseMethod($invoiceHash) {
+	public function action_chooseMethod($invoiceHash) 
+	{
 		$invoice = Invoice::where_hash($invoiceHash)->first();
 		$errors = new Messages();
 		if(!$invoice){
@@ -46,13 +47,15 @@ class Payments_Payments_Controller extends Controller
 			$errors->add('epicentro', "Payment not approved, the payment service says: [$status]");
 		}
 
-		$invoice = Invoice::where_hash($query->invoice);
+		$invoice = Invoice::where_hash($query->invoice)->first();
 		if(!$invoice){
 			$errors->add('epicentro', "Invoice ($query->invoice) not found");
 		} else {
 			$payment = Payment::fromPaymentResult($result);
 			$payment->invoice = $invoice;
+			$invoice->total_payments = $payment->recorded_amount;
 			$payment->save();
+			$invoice->save();
 		}
 			
 		$this->layout->content = View::make($this->configs->paymentResultsView, array($errors));
