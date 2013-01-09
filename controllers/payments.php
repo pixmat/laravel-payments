@@ -50,7 +50,7 @@ class Payments_Payments_Controller extends Controller
 		$invoice = Invoice::where_hash($query->invoice)->first();
 		if(!$invoice){
 			$errors->add('epicentro', "Invoice ($query->invoice) not found");
-		} else if ($invoice->total_payments >= $invoice.total_amount) {
+		} else if ($invoice->total_payments >= $invoice->total_amount) {
 			$errors->add('epicentro', "Invoice ($invoice->hash) is not pending for payment");
 		} else {
 			$payment = Payment::fromPaymentResult($result);
