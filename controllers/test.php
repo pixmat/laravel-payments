@@ -1,5 +1,7 @@
 <?php
 
+use Laravel\View;
+
 use Laravel\URL;
 
 use Laravel\Log;
@@ -12,12 +14,14 @@ class Payments_Test_Controller extends Controller
 	public function action_processPayment($paymentGateway){
 		parse_str($_SERVER['QUERY_STRING'], $queryString);
 
-		Log::debug("test for $paymentGateway with params: " . print_r($queryString, true));
-		if($paymentGateway == 'paguelofacil'){
+		Log::debug("test for $paymentGateway");
+		if($paymentGateway === 'paguelofacil'){
 			$responseQueryString = $this->getPagueloFacilSuccessResponse(new DataValue($queryString));
-			$url = URL::to_action('payments::payments@processPayment', array('paguelofacil'), $responseQueryString);
-			Redirect::to($url);
+			$url = EpiUrl::to_action('payments::payments@processPayment', array('paguelofacil'), $responseQueryString);
+			Log::debug("redirecting to url: $url");
+			return Redirect::to($url);
 		}
+		Return View::make('payments::notestfound', array('paymentGateway'=>$paymentGateway));
 	}
 
 	/**
@@ -49,5 +53,6 @@ class Payments_Test_Controller extends Controller
 				'Estado' => 'Aprobada',
 				'invoice' => $query->invoice,
 		);
+		return $result;
 	}
 }
