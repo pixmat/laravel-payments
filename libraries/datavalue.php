@@ -24,8 +24,7 @@ class DataValue
 		}
 
 		$trace = debug_backtrace();
-		trigger_error('Property not found: ' . $name .
-		'file: ' . $trace[0]['file'] . ' at line ' . $trace[0]['line'],
+		trigger_error("Property not found: [$name] file: " . $trace[0]['file'] . ' at line: ' . $trace[0]['line'],
 		E_USER_NOTICE);
 		return null;
 	}
