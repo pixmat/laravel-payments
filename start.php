@@ -18,14 +18,14 @@ Autoloader::namespaces(array(
 /**
  * Register IoC objects
 */
-/*
- Laravel\IoC::register('paypal', function()
- {
- 		$config = Config::get('payments::payments.paypal');
- 		$paypalGateway = new PaypalGateway($config);
- 		return $paypalGateway;
- 		});
-*/
+IoC::register('paymentdao', function(){
+	return null;
+});
+
+IoC::register('invoicedao', function(){
+	return null;
+});
+
 IoC::singleton('configs', function()
 {
 	Log::debug('loading configurations into IoC');
