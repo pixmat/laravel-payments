@@ -10,22 +10,28 @@ use Laravel\Messages;
 class Payments_Payments_Controller extends Controller
 {
 	var $configs = null;
+	var $invoiceDao = null;
+	var $paymentDao = null;
 
 	public function __construct()
 	{
 		$this->configs = IoC::resolve('configs');
 		$this->layout = View::make($this->configs->layout);
+		$this->invoiceDao = IoC::resolve('invoicedao');
+		$this->paymentDao = IoC::resolve('paymentdao');
 	}
 
-	public function action_chooseMethod($invoiceHash) 
+	public function action_chooseMethod($invoiceHash)
 	{
-		$invoice = Invoice::where_hash($invoiceHash)->first();
 		$errors = new Messages();
-		if(!$invoice){
-			$errors->add('epicentro', 'Invoice not found');
+		$invoice = false;
+		try {
+			$invoice = $this->invoiceDao->findByHashKey($invoiceHash);
+		}catch(Exception $ex){
+			$errors->add('epicentro', $ex->getMessage());
 		}
 		$view = View::make($this->configs->choosePaymentMethodView, array(
-				'invoice' => $invoice->asIInvoice(),
+				'invoice' => $invoice,
 				'errors' => $errors
 		));
 		$this->layout->content = $view;
@@ -47,19 +53,18 @@ class Payments_Payments_Controller extends Controller
 			$errors->add('epicentro', "Payment not approved, the payment service says: [$status]");
 		}
 
-		$invoice = Invoice::where_hash($query->invoice)->first();
-		if(!$invoice){
-			$errors->add('epicentro', "Invoice ($query->invoice) not found");
-		} else if ($invoice->total_payments >= $invoice->total_amount) {
-			$errors->add('epicentro', "Invoice ($invoice->hash) is not pending for payment");
-		} else {
-			$payment = Payment::fromPaymentResult($result);
-			$payment->invoice = $invoice;
-			$invoice->total_payments = $payment->recorded_amount;
-			$payment->save();
-			$invoice->save();
+		$invoice = false;
+		$payment = false;
+		try {
+			$invoice = $this->invoiceDao->findByHashKey($query->invoice);
+			if($invoice->isPaid()){
+				throw new Exception("Invoice [$query->invoice] is not pending for payment");
+			}
+			$payment = $this->paymentDao->fromPaymentGatewayResult($result);
+			$invoice->paybill($payment);
+		}catch(Exception $ex){
+			$errors->add('epicentro', $ex->getMessage());
 		}
-			
 		$this->layout->content = View::make($this->configs->paymentResultsView, array($errors));
 	}
 

@@ -31,4 +31,13 @@ interface IInvoice {
 	 * @return true is the bill has been paid
 	 */
 	function isPaid();
+	
+
+	/**
+	 * Pay this invoice, effectively registering the payment into permanent storage (DB, file, etc) and update this
+	 * invoice status.
+	 * 
+	 * @param unknown $payment the payment information
+	 */
+	public function paybill($payment);
 }
