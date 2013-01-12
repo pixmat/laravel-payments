@@ -10,24 +10,20 @@ use Laravel\Messages;
 class Payments_Payments_Controller extends Controller
 {
 	var $configs = null;
-	var $invoiceDao = null;
-	var $paymentDao = null;
 
 	public function __construct()
 	{
 		$this->configs = IoC::resolve('configs');
 		$this->layout = View::make($this->configs->layout);
-		$this->invoiceDao = IoC::resolve('invoicedao');
-		$this->paymentDao = IoC::resolve('paymentdao');
 	}
 
-	public function action_chooseMethod($invoiceHash)
+	public function action_chooseMethod($hash)
 	{
-		$invoice = Invoice::where_hash($invoiceHash)->first();
+		$invoiceDao = IoC::resolve('invoicedao');
 		$errors = new Messages();
 		$invoice = false;
 		try {
-			$invoice = $this->invoiceDao->findByHashKey($invoiceHash);
+			$invoice = $invoiceDao->findByHashKey($hash);
 		}catch(Exception $ex){
 			$errors->add('epicentro', $ex->getMessage());
 		}
@@ -40,6 +36,8 @@ class Payments_Payments_Controller extends Controller
 
 	public function action_processPayment($paymentGateway = '')
 	{
+		$invoiceDao = IoC::resolve('invoicedao');
+		$paymentDao = IoC::resolve('paymentdao');
 		parse_str($_SERVER['QUERY_STRING'], $queryString);
 		$query = new DataValue($queryString);
 		$errors = new Messages();
@@ -57,11 +55,11 @@ class Payments_Payments_Controller extends Controller
 		$invoice = false;
 		$payment = false;
 		try {
-			$invoice = $this->invoiceDao->findByHashKey($query->invoice);
+			$invoice = $invoiceDao->findByHashKey($query->invoice);
 			if($invoice->isPaid()){
 				throw new Exception("Invoice [$query->invoice] is not pending for payment");
 			}
-			$payment = $this->paymentDao->fromPaymentGatewayResult($result);
+			$payment = $paymentDao->fromPaymentGatewayResult($result);
 			$invoice->paybill($payment);
 		}catch(Exception $ex){
 			$errors->add('epicentro', $ex->getMessage());
