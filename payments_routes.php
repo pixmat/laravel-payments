@@ -8,7 +8,7 @@ use Laravel\Routing\Route;
 Route::group(array('before' => 'logged_in'), function()
 {
 	//list available payment gateways
-	Route::get('(:bundle)/(:any)', array(
+	Route::get('(:bundle)/(:any)/(:any?)', array(
 		'as' => 'choose_payment_method',
 		'uses' => 'payments::payments@chooseMethod',
 	));

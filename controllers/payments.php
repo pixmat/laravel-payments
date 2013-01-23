@@ -17,8 +17,9 @@ class Payments_Payments_Controller extends Controller
 		$this->layout = View::make($this->configs->layout);
 	}
 
-	public function action_chooseMethod($hash)
+	public function action_chooseMethod($hash, $processName=null)
 	{
+		$processName = is_null($processName) ? 'payment' : $processName;
 		$invoiceDao = IoC::resolve('invoicedao');
 		$errors = new Messages();
 		$invoice = false;
@@ -29,6 +30,7 @@ class Payments_Payments_Controller extends Controller
 		}
 		$view = View::make($this->configs->choosePaymentMethodView, array(
 				'invoice' => $invoice,
+				'processName' => $processName,
 				'errors' => $errors
 		));
 		$this->layout->content = $view;
