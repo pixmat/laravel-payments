@@ -13,7 +13,7 @@ class Payments_Test_Controller extends Controller
 {
 	public function action_processPayment($paymentGateway){
 		parse_str($_SERVER['QUERY_STRING'], $queryString);
-
+		Log::debug('Test query string: ' . print_r($queryString, true));
 		Log::debug("test for $paymentGateway");
 		if($paymentGateway === 'paguelofacil'){
 			$responseQueryString = $this->getPagueloFacilSuccessResponse(new DataValue($queryString));

@@ -19,6 +19,7 @@ class Payments_Payments_Controller extends Controller
 
 	public function action_chooseMethod($hash, $processName=null)
 	{
+		Log::debug("hash: $hash, process name: $processName");
 		$processName = is_null($processName) ? 'payment' : $processName;
 		$invoiceDao = IoC::resolve('invoicedao');
 		$errors = new Messages();
@@ -47,13 +48,13 @@ class Payments_Payments_Controller extends Controller
 		if ( !isset($gateway) || is_null($gateway) ){
 			$errors->add('epicentro', "Invalid payment service option ($paymentGateway)");
 		}
-
+		
 		$result = $gateway->processResult($query);
 		$status = $result[IPaymentResult::RECORDED_STATUS];
 		if ( $result[IPaymentResult::FAILED] ){
 			$errors->add('epicentro', "Payment not approved, the payment service says: [$status]");
 		}
-
+		
 		$invoice = false;
 		$payment = false;
 		try {
@@ -66,7 +67,7 @@ class Payments_Payments_Controller extends Controller
 		}catch(Exception $ex){
 			$errors->add('epicentro', $ex->getMessage());
 		}
-			
+		Log::debug('Rendering payment results view');
 		$this->layout->content = View::make($this->configs->paymentResultsView, array($errors));
 	}
 
