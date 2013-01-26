@@ -68,7 +68,18 @@ class Payments_Payments_Controller extends Controller
 			$errors->add('epicentro', $ex->getMessage());
 		}
 		Log::debug('Rendering payment results view');
-		$this->layout->content = View::make($this->configs->paymentResultsView, array($errors));
+		
+		$isUserRegistration =  Session::get('userRegistration', 'no') === 'yes';
+		if ($isUserRegistration){
+			$view = View::make($this->configs->wellcomePage, array('errors'=>$errors));
+		}else {
+			$view = View::make($this->configs->paymentResultsView, array(
+					'invoice' => $bill,
+					'gateway' => $gateway,
+					'errors' => $errors,
+			));
+		}
+		
 	}
 
 	public function action_manual()
