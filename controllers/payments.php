@@ -72,7 +72,7 @@ class Payments_Payments_Controller extends Controller
 		
 		$isUserRegistration =  Session::get('userRegistration', 'no') === 'yes';
 		if ($isUserRegistration){
-			$view = View::make($this->configs->wellcomePage, array('errors'=>$errors));
+			$view = View::make($this->configs->welcome, array('errors'=>$errors));
 		}else {
 			$view = View::make($this->configs->paymentResultsView, array(
 					'invoice' => $bill,
