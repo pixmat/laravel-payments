@@ -1,5 +1,7 @@
 <?php
 
+use Laravel\Config;
+
 use Laravel\View;
 
 use Laravel\URL;
@@ -19,11 +21,12 @@ class Payments_Test_Controller extends Controller
 	 * @return In case of unknown payment service a view will be shown indicating that no test can process can be performed 
 	 */
 	public function action_processPayment($paymentGateway){
+		$chancesToSuccess = Config::get('main.test_changes_2_success');
 		parse_str($_SERVER['QUERY_STRING'], $queryString);
 		Log::debug('Test query string: ' . print_r($queryString, true));
-		Log::debug("test for $paymentGateway");
+		Log::debug("running test for $paymentGateway");
 		if($paymentGateway === 'paguelofacil'){
-			$responseQueryString = $this->getPagueloFacilVariableResponse(new DataValue($queryString), 80);
+			$responseQueryString = $this->getPagueloFacilVariableResponse(new DataValue($queryString), $chancesToSuccess);
 			$url = EpiUrl::to_action('payments::payments@processPayment', array('paguelofacil'), $responseQueryString);
 			Log::debug("redirecting to url: $url");
 			return Redirect::to($url);
@@ -71,6 +74,7 @@ class Payments_Test_Controller extends Controller
 	 */
 	private function randBool($chance = 50) {
 		if($chance < 1 || $chance > 100) $chance = 50;
+		Log::debug("chances to success are: $chance");
 		return (rand(1, 100) <= $chance);
 	}
 	
