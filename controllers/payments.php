@@ -47,13 +47,13 @@ class Payments_Payments_Controller extends Controller
 		$errors = new Messages();
 		$gateway = IoC::resolve($paymentGateway);
 		if ( !isset($gateway) || is_null($gateway) ){
-			$errors->add('epicentro', "Invalid payment service option ($paymentGateway)");
+			$errors->add('epicentro', "Opcion de pago incorrecta ($paymentGateway)");
 		}
 		
 		$result = $gateway->processResult($query);
 		$status = $result[IPaymentResult::RECORDED_STATUS];
 		if ( $result[IPaymentResult::FAILED] ){
-			$errors->add('epicentro', "Payment not approved, the payment service says: [$status]");
+			$errors->add('epicentro', "Pago rechazado, el motivo indicado por el servicio de pago es: [$status]");
 		}
 		
 		$invoice = false;
@@ -61,7 +61,8 @@ class Payments_Payments_Controller extends Controller
 		try {
 			$invoice = $invoiceDao->findByHashKey($query->invoice);
 			if($invoice->isPaid()){
-				throw new Exception("Invoice [$query->invoice] is not pending for payment");
+				Log::debug("Invoice [$query->invoice] is not pending for payment");
+				throw new Exception("La factura indicada ya ha sido cancelada");
 			}
 			$payment = $paymentDao->fromPaymentGatewayResult($result);
 			$invoice->paybill($payment);
@@ -72,7 +73,7 @@ class Payments_Payments_Controller extends Controller
 		
 		$isUserRegistration =  Session::get('userRegistration', 'no') === 'yes';
 		if ($isUserRegistration){
-			$view = View::make($this->configs->welcome, array('errors'=>$errors));
+			$view = View::make($this->configs->welcomePage, array('errors'=>$errors));
 		}else {
 			$view = View::make($this->configs->paymentResultsView, array(
 					'invoice' => $bill,
@@ -80,6 +81,8 @@ class Payments_Payments_Controller extends Controller
 					'errors' => $errors,
 			));
 		}
+		$this->layout->title = 'Pago procesado';
+		$this->layout->content = $view;
 		
 	}
 
