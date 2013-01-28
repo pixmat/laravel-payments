@@ -18,13 +18,6 @@ Autoloader::namespaces(array(
 /**
  * Register IoC objects
 */
-IoC::register('paymentdao', function(){
-	return null;
-});
-
-IoC::register('invoicedao', function(){
-	return null;
-});
 
 IoC::singleton('configs', function()
 {

@@ -1,4 +1,4 @@
-<h3>Available payment services</h3>
+<h3>Available payment services [{{ $processName }}]</h3>
 <ul>
 	@foreach($paymentManager->getPaymentGateways() as $service)
 	<li>
