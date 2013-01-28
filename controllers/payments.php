@@ -19,6 +19,7 @@ class Payments_Payments_Controller extends Controller
 
 	public function action_chooseMethod($hash, $processName=null)
 	{
+		$this->layout->title = 'Escoja su metodo de pago';
 		Log::debug("hash: $hash, process name: $processName");
 		$processName = is_null($processName) ? 'payment' : $processName;
 		$invoiceDao = IoC::resolve('invoicedao');
