@@ -16,9 +16,9 @@ class Payments_Test_Controller extends Controller
 
 	/**
 	 * Fake various payment gateways response using only internal laravel redirections
-	 * 
+	 *
 	 * @param unknown $paymentGateway
-	 * @return In case of unknown payment service a view will be shown indicating that no test can process can be performed 
+	 * @return In case of unknown payment service a view will be shown indicating that no test can process can be performed
 	 */
 	public function action_processPayment($paymentGateway){
 		$chancesToSuccess = Config::get('main.test_changes_2_success');
@@ -33,7 +33,7 @@ class Payments_Test_Controller extends Controller
 		}
 		Return View::make('payments::notestfound', array('paymentGateway'=>$paymentGateway));
 	}
-	
+
 	/**
 	 * Faking paguelo facil response, that according to documentation must contain the following fields:
 	 *
@@ -50,7 +50,7 @@ class Payments_Test_Controller extends Controller
 	 *
 	 * @param DataValue $query
 	 */
-	public function getPagueloFacilVariableResponse(DataValue $query)
+	public function getPagueloFacilVariableResponse(DataValue $query, $chance = 50)
 	{
 		$result = array(
 				'TotalPagado' => $query->CMTN,
@@ -62,7 +62,7 @@ class Payments_Test_Controller extends Controller
 				'Email' => 'joker@gotham.city',
 				'invoice' => $query->invoice,
 		);
-		$result['Estado'] = $this->randBool(80) ? 'Aprobada' : 'Denegada';
+		$result['Estado'] = $this->randBool($chance) ? 'Aprobada' : 'Denegada';
 		return $result;
 	}
 
@@ -77,5 +77,5 @@ class Payments_Test_Controller extends Controller
 		Log::debug("chances to success are: $chance");
 		return (rand(1, 100) <= $chance);
 	}
-	
+
 }
