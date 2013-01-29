@@ -40,38 +40,39 @@ class Payments_Payments_Controller extends Controller
 
 	public function action_processPayment($paymentGateway = '')
 	{
-		$invoice = false;
+		//parse query string
+		$queryString = $this->parseQueryString();
+		//find invoice by hash
+		$invoice = $this->findInvoice($queryString->invoice);
 		$viewName = $this->resolveViewName();
+		$viewData = array('invoice' => $invoice);
+		
 		try {
-			//parse query string
-			$queryString = $this->parseQueryString();
+			$this->checkInvoiceStatus($invoice);
 			//get payment gateway by name
 			$gateway = $this->getPaymentGateway($paymentGateway);
 			//process payment service response
 			$result = $this->getPaymentServiceResponse($gateway, $queryString);
 			//construct payment from payment service result
 			$payment = $this->constructPaymentFromPaymentServiceResult($result);
-			//find invoice by hash
-			$invoice = $this->findInvoice($queryString->invoice);
-				
+
 			//register payment to bill
 			$invoice->paybill($payment);
-			
-			$viewData = array(
-					'invoice' => $invoice,
-					'gateway' => $gateway,
-			);
+				
+			$viewData['gateway'] = $gateway;
+			$viewData['status'] = 'success';
+		}catch(PaymentException $ex){
+			$viewData['status'] = 'error';
+			$viewDate['message'] = $ex->getMessage();
 		}catch(Exception $ex){
-			$errors = new Messages();
-			$errors->add('epicentro', $ex->getMessage());
-			$viewData = array('errors'=>$errors);
+			$viewData['status'] = 'error';
+			$viewData['message'] = 'Error no esperado procesando el pago';
 		}
-		
-		$this->layout->title = 'Pago procesado';
+
+		$this->layout->title = 'Proceso de pago';
 		Log::debug('Rendering payment results view');
 		$view = View::make($viewName, $viewData);
 		$this->layout->content = $view;
-
 	}
 
 	private function parseQueryString()
@@ -86,7 +87,7 @@ class Payments_Payments_Controller extends Controller
 		$gateway = IoC::resolve($paymentGateway);
 		if ( !isset($gateway) || is_null($gateway) ) {
 			Log::warn("Invoice [$query->invoice] is not pending for payment");
-			throw new Exception("Opcion de pago incorrecta ($paymentGateway)");
+			throw new PaymentException("Opcion de pago incorrecta ($paymentGateway)");
 		}
 		return $gateway;
 	}
@@ -97,7 +98,7 @@ class Payments_Payments_Controller extends Controller
 		$status = $result[IPaymentResult::RECORDED_STATUS];
 		if ( $result[IPaymentResult::FAILED] ){
 			Log::warn("Payment rejected by payment service, response is: " . print_r($result, true));
-			throw new Exception("Pago rechazado por el servicio de pago");
+			throw new PaymentException("Pago rechazado por el servicio de pago");
 		}
 		return $result;
 	}
@@ -106,11 +107,17 @@ class Payments_Payments_Controller extends Controller
 	{
 		$invoiceDao = IoC::resolve('invoicedao');
 		$bill = $invoiceDao->findByHashKey($hash);
-		if($bill->isPaid()){
-			Log::warn("Invoice [$hash] is not pending for payment");
-			throw new Exception("La factura indicada ya ha sido cancelada");
-		}
 		return $bill;
+	}
+
+	private function checkInvoiceStatus(IInvoice $bill)
+	{
+		if($bill->isPaid()){
+			$hash = $bill->hashKey();
+			Log::warn("Invoice [$hash] is not pending for payment");
+			throw new PaymentException("Esta factura ya ha sido cancelada");
+		}
+		return true;
 	}
 
 	private function constructPaymentFromPaymentServiceResult(array $result){
