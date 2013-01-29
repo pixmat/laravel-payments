@@ -55,7 +55,7 @@ class Payments_Payments_Controller extends Controller
 			$invoice = $this->findInvoice($queryString->invoice);
 				
 			//register payment to bill
-			//$invoice->paybill($payment);
+			$invoice->paybill($payment);
 			
 			$viewData = array(
 					'invoice' => $invoice,
