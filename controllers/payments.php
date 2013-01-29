@@ -61,9 +61,10 @@ class Payments_Payments_Controller extends Controller
 				
 			$viewData['gateway'] = $gateway;
 			$viewData['status'] = 'success';
+			$viewData['message'] = 'Pago realizado correctamente';
 		}catch(PaymentException $ex){
 			$viewData['status'] = 'error';
-			$viewDate['message'] = $ex->getMessage();
+			$viewData['message'] = $ex->getMessage();
 		}catch(Exception $ex){
 			$viewData['status'] = 'error';
 			$viewData['message'] = 'Error no esperado procesando el pago';
