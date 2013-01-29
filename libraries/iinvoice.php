@@ -7,7 +7,12 @@ interface IInvoice {
 	function amount();
 	function isRecurrent();
 	function hashKey();
-	
+	function settlementDate();
+	function maturityDate();
+	function subtotalAmount();
+	function taxesAmount();
+	function totalAmount();
+
 	/**
 	 * Is an outstanding bill, not yet overdue or paid.
 	 * When isOutstanding return true, isOverdue and isPaid must return false
