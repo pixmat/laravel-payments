@@ -22,6 +22,13 @@ interface IInvoice {
 	function isOutstanding();
 	
 	/**
+	 * Is a bill that is being processed, meaning is not paid yet.
+	 * When isPendingApproval return true, isOutstanding or isOverdue may return true but not both of them, 
+	 * meanwhile isPaid must return false.
+	 */
+	function isPendingApproval();
+	
+	/**
 	 * overdue bill
 	 * When isOverdue return true, isOutstanding and isPaid must return false
 	 * 

@@ -21,12 +21,11 @@ class Payments_Test_Controller extends Controller
 	 * @return In case of unknown payment service a view will be shown indicating that no test can process can be performed
 	 */
 	public function action_processPayment($paymentGateway){
-		$chancesToSuccess = Config::get('main.test_chances_2_success');
 		parse_str($_SERVER['QUERY_STRING'], $queryString);
 		Log::debug('Test query string: ' . print_r($queryString, true));
 		Log::debug("running test for $paymentGateway");
 		if($paymentGateway === 'paguelofacil'){
-			$responseQueryString = $this->getPagueloFacilVariableResponse(new DataValue($queryString), $chancesToSuccess);
+			$responseQueryString = $this->getPagueloFacilVariableResponse(new DataValue($queryString));
 			$url = EpiUrl::to_action('payments::payments@processPayment', array('paguelofacil'), $responseQueryString);
 			Log::debug("redirecting to url: $url");
 			return Redirect::to($url);
@@ -50,8 +49,9 @@ class Payments_Test_Controller extends Controller
 	 *
 	 * @param DataValue $query
 	 */
-	public function getPagueloFacilVariableResponse(DataValue $query, $chance = 50)
+	public function getPagueloFacilVariableResponse(DataValue $query)
 	{
+		$chancesToSuccess = Config::get('payments::main.test_chances_2_success', 81);
 		$result = array(
 				'TotalPagado' => $query->CMTN,
 				'Fecha' => date('Y-m-d'),
@@ -62,7 +62,8 @@ class Payments_Test_Controller extends Controller
 				'Email' => 'joker@gotham.city',
 				'invoice' => $query->invoice,
 		);
-		$result['Estado'] = $this->randBool($chance) ? 'Aprobada' : 'Denegada';
+		$status = $this->randBool($chancesToSuccess) ? 'Aprobada' : 'Denegada';
+		$result['Estado'] = $status;
 		return $result;
 	}
 
@@ -73,9 +74,9 @@ class Payments_Test_Controller extends Controller
 	 * @return boolean
 	 */
 	private function randBool($chance = 50) {
-		if($chance < 1 || $chance > 100) $chance = 50;
-		Log::debug("chances to success are: $chance");
-		return (rand(1, 100) <= $chance);
+		if (!($chance >= 1 && $chance <= 100)) $chance = 50;
+		$num = rand(1, 100);
+		return ($num <= $chance);
 	}
 
 }
