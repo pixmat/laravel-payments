@@ -21,7 +21,7 @@ class Payments_Test_Controller extends Controller
 	 * @return In case of unknown payment service a view will be shown indicating that no test can process can be performed
 	 */
 	public function action_processPayment($paymentGateway){
-		$chancesToSuccess = Config::get('main.test_changes_2_success');
+		$chancesToSuccess = Config::get('main.test_chances_2_success');
 		parse_str($_SERVER['QUERY_STRING'], $queryString);
 		Log::debug('Test query string: ' . print_r($queryString, true));
 		Log::debug("running test for $paymentGateway");
