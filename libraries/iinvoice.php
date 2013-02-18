@@ -9,6 +9,7 @@ interface IInvoice {
 	function hashKey();
 	function settlementDate();
 	function maturityDate();
+	function cutoffDate();
 	function subtotalAmount();
 	function taxesAmount();
 	function totalAmount();
